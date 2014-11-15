@@ -2,6 +2,7 @@ package com.kylemsguy.buildingpoint;
 
 import java.util.*;
 
+import android.app.*;
 import android.location.*;
 import android.os.*;
 import net.zhuoweizhang.bingvenueaccess.*;
@@ -15,7 +16,7 @@ public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
     private MainActivity activity;
     private float heading;
     private Location location;
-    private List<Entity> entities;
+    private List<Entity> entities = new ArrayList<Entity>();
     public ProcessPointTask(MainActivity activity, Location location, float heading) {
         this.activity = activity;
         this.location = location;
@@ -35,6 +36,10 @@ public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
             return null;
         }
+    }
+
+    protected void onPostExecute(Void arg) {
+        new AlertDialog.Builder(activity).setMessage(entities.toString()).show();
     }
 
 }

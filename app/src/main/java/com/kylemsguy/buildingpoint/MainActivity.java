@@ -52,7 +52,10 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-        mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        for (String provider: mLocationManager.getProviders(true)) {
+            currentLocation = mLocationManager.getLastKnownLocation(provider);
+            if (currentLocation != null) break;
+        }
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
@@ -112,6 +115,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
     }
 
     public void onLocationChanged(Location location) {
+        System.out.println(location);
         this.currentLocation = location;
     }
 
