@@ -10,4 +10,11 @@
         android:layout_height="wrap_content"
         android:text="@string/heading"/>
 
+    <Button
+        android:id="@+id/btnPoint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bam!"
+        android:layout_below="@id/tvHeading"/>
+
 </RelativeLayout>

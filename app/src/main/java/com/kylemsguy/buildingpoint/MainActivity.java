@@ -6,13 +6,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends Activity implements SensorEventListener, View.OnClickListener, LocationListener {
 
     private float[] mGravity;
     private float[] mGeomagnetic;
@@ -22,8 +27,11 @@ public class MainActivity extends Activity implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private Sensor mMagnetometer;
+    private LocationManager mLocationManager;
 
     TextView tvHeading;
+    private Button btnPoint;
+    private Location currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +42,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        btnPoint = (Button) findViewById(R.id.btnPoint);
+        btnPoint.setOnClickListener(this);
     }
 
     @Override
@@ -41,12 +52,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
         mSensorManager.unregisterListener(this);
+        mLocationManager.removeUpdates(this);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy){
@@ -90,4 +104,20 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void onClick(View v) {
+        if (v == btnPoint) {
+            new ProcessPointTask(this, currentLocation, azimuth).execute();
+        }
+    }
+
+    public void onLocationChanged(Location location) {
+        this.currentLocation = location;
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    public void onProviderEnabled(String provider) {}
+
+    public void onProviderDisabled(String provider) {}
 }
