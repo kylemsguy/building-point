@@ -1,6 +1,7 @@
 package com.kylemsguy.buildingpoint;
 
 import android.app.Activity;
+import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,10 +14,14 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
-    private float currentDegree = 0f;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
+
+    private float azimuth = 0.0f;
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
+    private Sensor mMagnetometer;
 
     TextView tvHeading;
 
@@ -28,12 +33,14 @@ public class MainActivity extends Activity implements SensorEventListener {
         tvHeading = (TextView) findViewById(R.id.tvHeading);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -47,8 +54,22 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event){
-        float degree = Math.round(event.values[0]);
-        tvHeading.setText("Heading: " + Float.toString(degree) + "\u00b0");
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+            mGravity = event.values;
+        if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+            mGeomagnetic = event.values;
+        if(mGravity != null && mGeomagnetic != null){
+            float R[] = new float[9];
+            float I[] = new float[9];
+
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+            if(success){
+                float orientation[] = new float[3];
+                SensorManager.getOrientation(R, orientation);
+                azimuth = orientation[0];
+            }
+        }
+        tvHeading.setText("Heading: " + Float.toString(azimuth) + " rad");
     }
 
     @Override
