@@ -29,7 +29,8 @@ public class MainActivity extends Activity implements SensorEventListener, View.
     private Sensor mMagnetometer;
     private LocationManager mLocationManager;
 
-    TextView tvHeading;
+    private TextView tvHeading;
+    private TextView lastBamHeading;
     private Button btnPoint;
     private Location currentLocation;
 
@@ -39,6 +40,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         setContentView(R.layout.activity_main);
 
         tvHeading = (TextView) findViewById(R.id.tvHeading);
+        lastBamHeading = (TextView) findViewById(R.id.tvLastBam);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -110,6 +112,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
 
     public void onClick(View v) {
         if (v == btnPoint) {
+            lastBamHeading.setText("Heading @ last Bam: " + Float.toString(azimuth) + " rad");
             new ProcessPointTask(this, currentLocation, azimuth).execute();
         }
     }

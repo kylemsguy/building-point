@@ -17,4 +17,13 @@
         android:text="Bam!"
         android:layout_below="@id/tvHeading"/>
 
+    <TextView
+        android:id="@+id/tvLastBam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heading \@ last Bam: N/A"
+        android:layout_below="@+id/btnPoint"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp" />
+
 </RelativeLayout>
