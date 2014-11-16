@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -34,6 +36,8 @@ public class SingleLocDetailFragment extends Fragment {
     private String mName;
     private double[] mLatLongCenter;
     private double[] mLatLongBuilding;
+
+    private ImageLoader mImageLoader;
 
 
     /**
@@ -83,11 +87,11 @@ public class SingleLocDetailFragment extends Fragment {
         double newY = mLatLongCenter[1] + dy / 2;
         //int dZoom = (int) Math.ceil(Math.sqrt(dx*dx + dy*dy));
         int dZoom = 0;
-        if (Math.sqrt(dx * dx + dy * dy) * 10000 > 0.8)
+        if (Math.sqrt(dx * dx + dy * dy) * 10000 > 19)
             dZoom++;
-        if (Math.sqrt(dx * dx + dy * dy) * 10000 > 1.2)
+        if (Math.sqrt(dx * dx + dy * dy) * 10000 > 28)
             dZoom++;
-        System.out.println(dx + " " + dy + " " + dZoom);
+        System.out.println(Math.sqrt(dx * dx + dy * dy) * 10000 + " " + dZoom);
         String newCenter = newX + "," + newY;
         String imageURL = "http://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/" +
                 newCenter + "/" + (ZOOM_LEVEL - dZoom) + "?pushpin=" +
@@ -95,17 +99,8 @@ public class SingleLocDetailFragment extends Fragment {
                 "&pushpin=" + mLatLongBuilding[0] + "," + mLatLongBuilding[1] + ";37" +
                 "&format=png&mapMetadata=0" + "&mapsize=300,300" +
                 "&key=" + ProcessPointTask.API_KEY;
-        Bitmap mapBitmap = null;
-        try {
-            mapBitmap = new LoadMapTask().execute(imageURL).get();
-            System.out.println("Loaded Map Bitmap");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        mapImage.setImageBitmap(mapBitmap);
+        ImageLoader mImageLoader = ImageLoader.getInstance();
+        mImageLoader.displayImage(imageURL, mapImage);
         System.out.println(imageURL);
         return theView;
     }

@@ -20,6 +20,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import java.util.List;
 
 import net.zhuoweizhang.bingvenueaccess.model.*;
@@ -53,6 +57,13 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .defaultDisplayImageOptions(defaultOptions)
+                .build();
+        ImageLoader.getInstance().init(config);
     }
 
     @Override
