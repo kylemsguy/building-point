@@ -1,6 +1,8 @@
 package com.kylemsguy.buildingpoint;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,11 +12,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.content.Intent;
 
 import java.util.List;
 
@@ -63,7 +67,15 @@ public class MainActivity extends Activity implements SensorEventListener, View.
             System.out.println("yo: " + provider + ":" + currentLocation);
             if (currentLocation != null) break;
         }
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        else if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            System.out.println("Warning: entering low-accuracy mode");
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        } else {
+            showLocationSettingDialog();
+        }
     }
 
     @Override
@@ -121,8 +133,33 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         }
     }
 
+    private void showLocationSettingDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("No location data found. Check your Location Settings.");
+        alertDialog.setTitle("No Location Data");
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        alertDialog.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // No code here yet
+            }
+        });
+        alertDialog.setCancelable(true);
+        alertDialog.create().show();
+    }
+
     public void doQueryPoint() {
-        new ProcessPointTask(this, currentLocation, azimuth).execute();
+        if (currentLocation == null) {
+            showLocationSettingDialog();
+        } else {
+            new ProcessPointTask(this, currentLocation, azimuth).execute();
+        }
     }
 
     public void onLocationChanged(Location location) {
