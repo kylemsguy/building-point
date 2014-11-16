@@ -29,6 +29,8 @@ public class SingleLocDetailFragment extends Fragment {
     private static final String ARG_LATLONG_CENTER = "latlongcenter";
     private static final String ARG_LATLONG_BUILDING = "latlongbuilding";
 
+    private static final String ZOOM_LEVEL = "18";
+
     private String mName;
     private double[] mLatLongCenter;
     private double[] mLatLongBuilding;
@@ -77,12 +79,13 @@ public class SingleLocDetailFragment extends Fragment {
         TextView nameText = (TextView) theView.findViewById(R.id.loc_buildingname);
         nameText.setText(mName);
         ImageView mapImage = (ImageView) theView.findViewById(R.id.loc_mapview);
-        mImageLoader.loadImage(mapImage,
-                "http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/" +
-                        mLatLongCenter[0] + "," + mLatLongCenter[1] + "/10?mapSize=350x350" +
-                        "&pushpin=" + mLatLongBuilding[0] + "," + mLatLongBuilding[1] + ";5;P10" +
-                        "&imagerySet=Aerial&format=png&mapMetadata=0" +
-                        "&key=" + ProcessPointTask.API_KEY);
+        String imageURL = "http://dev.virtualearth.net/REST/v1/Imagery/Map/Aerial/" +
+                mLatLongCenter[0] + "," + mLatLongCenter[1] + "/" + ZOOM_LEVEL + "?mapSize=350,350" +
+                "&pushpin=" + mLatLongBuilding[0] + "," + mLatLongBuilding[1] + ";5;P10" +
+                "&format=png&mapMetadata=0" +
+                "&key=" + ProcessPointTask.API_KEY;
+        mImageLoader.loadImage(mapImage, imageURL);
+        System.out.println(imageURL);
         return theView;
     }
 

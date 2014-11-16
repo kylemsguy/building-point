@@ -123,6 +123,10 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_locsettings) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
