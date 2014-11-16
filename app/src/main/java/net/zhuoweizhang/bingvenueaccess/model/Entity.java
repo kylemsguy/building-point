@@ -9,6 +9,6 @@ public class Entity {
 	public Map<String, String> name;
 	public String toString() {
 		if (name == null) return super.toString();
-		return super.toString() + name;
+		return name.get("");
 	}
 }
