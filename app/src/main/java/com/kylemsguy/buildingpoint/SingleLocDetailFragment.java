@@ -1,7 +1,9 @@
 package com.kylemsguy.buildingpoint;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -25,7 +27,7 @@ import net.zhuoweizhang.bingvenueaccess.model.Entity;
  * Use the {@link SingleLocDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SingleLocDetailFragment extends Fragment {
+public class SingleLocDetailFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_NAME = "name";
     private static final String ARG_LATLONG_CENTER = "latlongcenter";
@@ -102,12 +104,19 @@ public class SingleLocDetailFragment extends Fragment {
         ImageLoader mImageLoader = ImageLoader.getInstance();
         mImageLoader.displayImage(imageURL, mapImage);
         System.out.println(imageURL);
+        mapImage.setOnClickListener(this);
         return theView;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    public void onClick(View v) {
+        Intent searchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.bing.com/maps/?q=" +
+                Uri.encode(mName) + "&lvl=" + (ZOOM_LEVEL - 1)));
+        startActivity(searchIntent);
     }
 
 }
