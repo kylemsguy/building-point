@@ -1,10 +1,15 @@
 package com.kylemsguy.buildingpoint;
 
 import android.app.Activity;
+<<<<<<< HEAD
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+=======
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+>>>>>>> master
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,13 +19,25 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.os.IBinder;
+=======
+import android.provider.Settings;
+>>>>>>> master
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+<<<<<<< HEAD
 import android.widget.Toast;
+=======
+import android.content.Intent;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+>>>>>>> master
 
 import java.util.List;
 
@@ -43,7 +60,6 @@ public class MainActivity extends Activity implements SensorEventListener, View.
 
     private TextView tvHeading;
     private TextView lastBamHeading;
-    private Button btnPoint;
     private Location currentLocation;
 
 	/* Nod */
@@ -168,9 +184,16 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        //btnPoint = (Button) findViewById(R.id.btnPoint);
-        //btnPoint.setOnClickListener(this);
+
 		bindService(new Intent(this, OpenSpatialService.class), mOpenSpatialServiceConnection, BIND_AUTO_CREATE);
+
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .defaultDisplayImageOptions(defaultOptions)
+                .build();
+        ImageLoader.getInstance().init(config);
     }
 
     @Override
@@ -183,7 +206,15 @@ public class MainActivity extends Activity implements SensorEventListener, View.
             System.out.println("yo: " + provider + ":" + currentLocation);
             if (currentLocation != null) break;
         }
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        else if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            System.out.println("Warning: entering low-accuracy mode");
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        } else {
+            showLocationSettingDialog();
+        }
     }
 
     @Override
@@ -235,13 +266,37 @@ public class MainActivity extends Activity implements SensorEventListener, View.
 			nodEnabled = !nodEnabled;
 			setTitle(nodEnabled? "BuildingPoint: Nod Enabled!": "BuildingPoint");
 		}
+        } else if (id == R.id.action_locsettings) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View v) {
-        if (v == btnPoint) {
-            //lastBamHeading.setText("Heading @ last Bam: " + Float.toString(azimuth) + " rad");
-        }
+
+    }
+
+    private void showLocationSettingDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("No location data found. Check your Location Settings.");
+        alertDialog.setTitle("No Location Data");
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        alertDialog.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // No code here yet
+            }
+        });
+        alertDialog.setCancelable(true);
+        alertDialog.create().show();
     }
 
     public void doQueryPoint() {
@@ -251,6 +306,12 @@ public class MainActivity extends Activity implements SensorEventListener, View.
 			setTitle("nod: " + (((nodEulerAngle.yaw - nodCalibrateSubtractAngle) + nodCalibrateAddAngle) % Math.PI )+ " reg: " + azimuth);
 		}
         new ProcessPointTask(this, currentLocation, yaw).execute();
+
+        if (currentLocation == null) {
+            showLocationSettingDialog();
+        } else {
+            new ProcessPointTask(this, currentLocation, azimuth).execute();
+        }
     }
 
     public void onLocationChanged(Location location) {

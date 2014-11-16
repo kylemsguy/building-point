@@ -26,6 +26,7 @@ public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
 
     protected void onPreExecute() {
         progressDialog = new ProgressDialog(activity);
+        progressDialog.setMessage("Loading Building Data...");
         progressDialog.show();
     }
 
@@ -47,7 +48,18 @@ public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
 
     protected void onPostExecute(Void arg) {
         progressDialog.dismiss();
-        new AlertDialog.Builder(activity).setMessage(entities.toString()).show();
+        //new AlertDialog.Builder(activity).setMessage(entities.toString()).show();
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+        StringBuilder sb = new StringBuilder();
+        alertDialog.setTitle("Found buildings");
+        for (int i = 0; i < entities.size(); i++) {
+            sb.append(entities.get(i).toString());
+            if (i < entities.size() - 1)
+                sb.append("\n");
+        }
+        alertDialog.setMessage(sb.toString());
+        alertDialog.setPositiveButton("Close", null);
+        alertDialog.show();
         activity.receiveEntities(entities, location);
     }
 

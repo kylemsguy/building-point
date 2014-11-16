@@ -1,6 +1,7 @@
 package com.kylemsguy.buildingpoint;
 
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -11,9 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
-import com.xtremelabs.imageutils.*;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import net.zhuoweizhang.bingvenueaccess.model.Entity;
 
@@ -29,9 +31,12 @@ public class SingleLocDetailFragment extends Fragment {
     private static final String ARG_LATLONG_CENTER = "latlongcenter";
     private static final String ARG_LATLONG_BUILDING = "latlongbuilding";
 
+    private static final int ZOOM_LEVEL = 18;
+
     private String mName;
     private double[] mLatLongCenter;
     private double[] mLatLongBuilding;
+
     private ImageLoader mImageLoader;
 
 
@@ -63,10 +68,9 @@ public class SingleLocDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mName = getArguments().getString(ARG_NAME);
-            mLatLongCenter = getArguments().getDoubleArray(ARG_LATLONG_BUILDING);
-            mLatLongBuilding = getArguments().getDoubleArray(ARG_LATLONG_CENTER);
+            mLatLongCenter = getArguments().getDoubleArray(ARG_LATLONG_CENTER);
+            mLatLongBuilding = getArguments().getDoubleArray(ARG_LATLONG_BUILDING);
         }
-        mImageLoader = ImageLoader.buildImageLoaderForFragment(this);
     }
 
     @Override
@@ -77,13 +81,33 @@ public class SingleLocDetailFragment extends Fragment {
         TextView nameText = (TextView) theView.findViewById(R.id.loc_buildingname);
         nameText.setText(mName);
         ImageView mapImage = (ImageView) theView.findViewById(R.id.loc_mapview);
-        mImageLoader.loadImage(mapImage,
-                "http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/" +
-                        mLatLongCenter[0] + "," + mLatLongCenter[1] + "/10?mapSize=350x350" +
-                        "&pushpin=" + mLatLongBuilding[0] + "," + mLatLongBuilding[1] + ";5;P10" +
-                        "&imagerySet=Aerial&format=png&mapMetadata=0" +
-                        "&key=" + ProcessPointTask.API_KEY);
+        double dx = (mLatLongBuilding[0] - mLatLongCenter[0]);
+        double dy = (mLatLongBuilding[1] - mLatLongCenter[1]);
+        double newX = mLatLongCenter[0] + dx / 2;
+        double newY = mLatLongCenter[1] + dy / 2;
+        //int dZoom = (int) Math.ceil(Math.sqrt(dx*dx + dy*dy));
+        int dZoom = 0;
+        if (Math.sqrt(dx * dx + dy * dy) * 10000 > 19)
+            dZoom++;
+        if (Math.sqrt(dx * dx + dy * dy) * 10000 > 28)
+            dZoom++;
+        System.out.println(Math.sqrt(dx * dx + dy * dy) * 10000 + " " + dZoom);
+        String newCenter = newX + "," + newY;
+        String imageURL = "http://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/" +
+                newCenter + "/" + (ZOOM_LEVEL - dZoom) + "?pushpin=" +
+                mLatLongCenter[0] + "," + mLatLongCenter[1] + ";0" +
+                "&pushpin=" + mLatLongBuilding[0] + "," + mLatLongBuilding[1] + ";37" +
+                "&format=png&mapMetadata=0" + "&mapsize=300,300" +
+                "&key=" + ProcessPointTask.API_KEY;
+        ImageLoader mImageLoader = ImageLoader.getInstance();
+        mImageLoader.displayImage(imageURL, mapImage);
+        System.out.println(imageURL);
         return theView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
 }
