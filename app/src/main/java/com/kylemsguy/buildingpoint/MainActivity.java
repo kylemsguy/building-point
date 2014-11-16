@@ -1,15 +1,12 @@
 package com.kylemsguy.buildingpoint;
 
 import android.app.Activity;
-<<<<<<< HEAD
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-=======
 import android.app.AlertDialog;
 import android.content.DialogInterface;
->>>>>>> master
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,25 +16,19 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-<<<<<<< HEAD
 import android.os.IBinder;
-=======
 import android.provider.Settings;
->>>>>>> master
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-<<<<<<< HEAD
 import android.widget.Toast;
-=======
 import android.content.Intent;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
->>>>>>> master
 
 import java.util.List;
 
@@ -102,10 +93,9 @@ public class MainActivity extends Activity implements SensorEventListener, View.
                                 } else if (bEvent.buttonEventType == ButtonEvent.ButtonEventType.TOUCH1_DOWN &&
 									System.currentTimeMillis() - nodLastDownButton1 > 1000) {
                                     System.out.println("Recenter!");
-									Toast.makeText(MainActivity.this, "Recentered!", Toast.LENGTH_SHORT
-).show();
-									if (nodEulerAngle != null) {
-										nodCalibrateSubtractAngle = nodEulerAngle.yaw;
+                                    Toast.makeText(MainActivity.this, "Recentered!", Toast.LENGTH_SHORT).show();
+                                    if (nodEulerAngle != null) {
+                                        nodCalibrateSubtractAngle = nodEulerAngle.yaw;
 										nodCalibrateAddAngle = azimuth;
 									}
 									nodLastDownButton1 = System.currentTimeMillis();
@@ -265,7 +255,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         } else if (id == R.id.action_toggle_nod) {
 			nodEnabled = !nodEnabled;
 			setTitle(nodEnabled? "BuildingPoint: Nod Enabled!": "BuildingPoint");
-		}
+            return true;
         } else if (id == R.id.action_locsettings) {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
