@@ -39,7 +39,6 @@ public class MainActivity extends Activity implements SensorEventListener, View.
 
     private TextView tvHeading;
     private TextView lastBamHeading;
-    private Button btnPoint;
     private Location currentLocation;
 
     @Override
@@ -53,8 +52,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        //btnPoint = (Button) findViewById(R.id.btnPoint);
-        //btnPoint.setOnClickListener(this);
+
     }
 
     @Override
@@ -132,9 +130,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
     }
 
     public void onClick(View v) {
-        if (v == btnPoint) {
-            //lastBamHeading.setText("Heading @ last Bam: " + Float.toString(azimuth) + " rad");
-        }
+
     }
 
     private void showLocationSettingDialog() {
