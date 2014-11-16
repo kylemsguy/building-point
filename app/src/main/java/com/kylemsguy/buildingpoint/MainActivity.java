@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
+import net.zhuoweizhang.bingvenueaccess.model.*;
+
 
 public class MainActivity extends Activity implements SensorEventListener, View.OnClickListener, LocationListener {
 
@@ -54,7 +58,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-        for (String provider: mLocationManager.getProviders(true)) {
+        for (String provider : mLocationManager.getProviders(true)) {
             currentLocation = mLocationManager.getLastKnownLocation(provider);
             if (currentLocation != null) break;
         }
@@ -62,27 +66,27 @@ public class MainActivity extends Activity implements SensorEventListener, View.
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
         mLocationManager.removeUpdates(this);
     }
 
-    public void onAccuracyChanged(Sensor sensor, int accuracy){
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Not in use.
     }
 
-    public void onSensorChanged(SensorEvent event){
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
             mGravity = event.values;
-        if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
             mGeomagnetic = event.values;
-        if(mGravity != null && mGeomagnetic != null){
+        if (mGravity != null && mGeomagnetic != null) {
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-            if(success){
+            if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
                 azimuth = orientation[0];
@@ -122,9 +126,16 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         this.currentLocation = location;
     }
 
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    public void receiveEntities(List<Entity> entities) {
+        // PASS ENTITIES TO ADAPTER IN SINGLELOCDETAILFRAGMENT
+    }
 
-    public void onProviderEnabled(String provider) {}
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
 
-    public void onProviderDisabled(String provider) {}
+    public void onProviderEnabled(String provider) {
+    }
+
+    public void onProviderDisabled(String provider) {
+    }
 }

@@ -8,10 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/* Bundle contents
+    want name of building
+    long/lat of user
+    long/lat of target building
+ */
 
 public class LocDetailFragment extends Fragment {
     public LocDetailFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
