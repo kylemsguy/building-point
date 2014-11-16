@@ -49,8 +49,8 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        btnPoint = (Button) findViewById(R.id.btnPoint);
-        btnPoint.setOnClickListener(this);
+        //btnPoint = (Button) findViewById(R.id.btnPoint);
+        //btnPoint.setOnClickListener(this);
     }
 
     @Override
@@ -60,6 +60,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         for (String provider : mLocationManager.getProviders(true)) {
             currentLocation = mLocationManager.getLastKnownLocation(provider);
+            System.out.println("yo: " + provider + ":" + currentLocation);
             if (currentLocation != null) break;
         }
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -92,7 +93,7 @@ public class MainActivity extends Activity implements SensorEventListener, View.
                 azimuth = orientation[0];
             }
         }
-        tvHeading.setText("Heading: " + Float.toString(azimuth) + " rad");
+        //tvHeading.setText("Heading: " + Float.toString(azimuth) + " rad");
     }
 
     @Override
@@ -116,9 +117,12 @@ public class MainActivity extends Activity implements SensorEventListener, View.
 
     public void onClick(View v) {
         if (v == btnPoint) {
-            lastBamHeading.setText("Heading @ last Bam: " + Float.toString(azimuth) + " rad");
-            new ProcessPointTask(this, currentLocation, azimuth).execute();
+            //lastBamHeading.setText("Heading @ last Bam: " + Float.toString(azimuth) + " rad");
         }
+    }
+
+    public void doQueryPoint() {
+        new ProcessPointTask(this, currentLocation, azimuth).execute();
     }
 
     public void onLocationChanged(Location location) {
@@ -126,8 +130,14 @@ public class MainActivity extends Activity implements SensorEventListener, View.
         this.currentLocation = location;
     }
 
-    public void receiveEntities(List<Entity> entities) {
+    public void receiveEntities(List<Entity> entities, Location location) {
+        if (location == null) return;
         // PASS ENTITIES TO ADAPTER IN SINGLELOCDETAILFRAGMENT
+        LocDetailFragment theFragment = ((LocDetailFragment) getFragmentManager().findFragmentByTag("LocDetailFragment"));
+        theFragment.getViewPager().setCurrentItem(0);
+        theFragment.getAdapter().setPages(entities).setCenterLoc(new double[]{location.getLatitude(), location.getLongitude()}).
+                notifyDataSetChanged();
+        theFragment.getViewPager().setVisibility(entities.size() > 0 ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {

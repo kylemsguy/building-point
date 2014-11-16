@@ -8,8 +8,12 @@ import android.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
+
+import com.xtremelabs.imageutils.*;
 
 import net.zhuoweizhang.bingvenueaccess.model.Entity;
 
@@ -28,6 +32,7 @@ public class SingleLocDetailFragment extends Fragment {
     private String mName;
     private double[] mLatLongCenter;
     private double[] mLatLongBuilding;
+    private ImageLoader mImageLoader;
 
 
     /**
@@ -61,36 +66,24 @@ public class SingleLocDetailFragment extends Fragment {
             mLatLongCenter = getArguments().getDoubleArray(ARG_LATLONG_BUILDING);
             mLatLongBuilding = getArguments().getDoubleArray(ARG_LATLONG_CENTER);
         }
+        mImageLoader = ImageLoader.buildImageLoaderForFragment(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_single_loc_detail, container, false);
-    }
-
-    private static class DetailPagerAdapter extends FragmentStatePagerAdapter {
-        private List<Entity> pages;
-        private double[] center_loc;
-
-        public DetailPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return pages.size();
-        }
-
-        public void setPages(List<Entity> pages) {
-            this.pages = pages;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return SingleLocDetailFragment.newInstance(pages.get(position).name.get(""), center_loc, pages.get(position).location);
-        }
+        View theView = inflater.inflate(R.layout.fragment_single_loc_detail, container, false);
+        TextView nameText = (TextView) theView.findViewById(R.id.loc_buildingname);
+        nameText.setText(mName);
+        ImageView mapImage = (ImageView) theView.findViewById(R.id.loc_mapview);
+        mImageLoader.loadImage(mapImage,
+                "http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/" +
+                        mLatLongCenter[0] + "," + mLatLongCenter[1] + "/10?mapSize=350x350" +
+                        "&pushpin=" + mLatLongBuilding[0] + "," + mLatLongBuilding[1] + ";5;P10" +
+                        "&imagerySet=Aerial&format=png&mapMetadata=0" +
+                        "&key=" + ProcessPointTask.API_KEY);
+        return theView;
     }
 
 }

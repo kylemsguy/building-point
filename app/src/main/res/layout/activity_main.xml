@@ -15,7 +15,8 @@
         android:layout_weight="4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:layout="@layout/fragment_loc_detail" />
+        tools:layout="@layout/fragment_loc_detail"
+        android:tag="LocDetailFragment" />
 
     <fragment
         android:name="com.kylemsguy.buildingpoint.QueryButtonFragment"

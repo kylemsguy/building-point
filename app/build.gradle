@@ -25,4 +25,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:support-v13:21.0.0'
+    compile files('libs/xl-image_utils_lib-android-v1.4.jar')
 }

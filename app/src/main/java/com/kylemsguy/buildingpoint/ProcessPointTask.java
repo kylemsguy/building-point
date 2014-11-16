@@ -10,7 +10,7 @@ import net.zhuoweizhang.bingvenueaccess.model.*;
 
 public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
 
-    private static final String API_KEY = "AiGyFKAL6AMsIccErosDUwQAGJKEzi-_pn8TZDGuXJqYRCW4mk5GKAG3itCF9AWF";
+    public static final String API_KEY = "AiGyFKAL6AMsIccErosDUwQAGJKEzi-_pn8TZDGuXJqYRCW4mk5GKAG3itCF9AWF";
     private static final int MAX_RANGE_IN_METERS = 500;
 
     private MainActivity activity;
@@ -36,6 +36,7 @@ public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
             VenueMap venue = client.getVenue(venues[0].metadata.MapId);
             entities = VenueUtils.rayCast(venue, location.getLatitude(), location.getLongitude(), (heading / Math.PI) * 180,
                 MAX_RANGE_IN_METERS / 1000.0, 10 / 1000.0);
+            //if (entities.size() >= 1) entities.remove(0);
             System.out.println(entities);
             return null;
         } catch (Exception e) {
@@ -47,6 +48,7 @@ public class ProcessPointTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void arg) {
         progressDialog.dismiss();
         new AlertDialog.Builder(activity).setMessage(entities.toString()).show();
+        activity.receiveEntities(entities, location);
     }
 
 }

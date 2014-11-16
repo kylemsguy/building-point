@@ -6,12 +6,15 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class QueryButtonFragment extends Fragment {
+public class QueryButtonFragment extends Fragment implements View.OnClickListener {
+
+    private Button btnPoint;
 
 
     public QueryButtonFragment() {
@@ -23,8 +26,14 @@ public class QueryButtonFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_query_button, container, false);
+        btnPoint = (Button) inflater.inflate(R.layout.fragment_query_button, container, false);
+        btnPoint.setOnClickListener(this);
+        return btnPoint;
     }
 
-
+    public void onClick(View v) {
+        if (v == btnPoint) {
+            ((MainActivity) getActivity()).doQueryPoint();
+        }
+    }
 }
