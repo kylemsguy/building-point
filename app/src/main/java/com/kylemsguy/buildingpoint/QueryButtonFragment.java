@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
 /**
@@ -33,6 +35,8 @@ public class QueryButtonFragment extends Fragment implements View.OnClickListene
 
     public void onClick(View v) {
         if (v == btnPoint) {
+            ((TextView) getActivity().findViewById(R.id.initial_title)).setVisibility(View.GONE);
+            ((ImageView) getActivity().findViewById(R.id.logo_placeholder)).setVisibility(View.GONE);
             ((MainActivity) getActivity()).doQueryPoint();
         }
     }

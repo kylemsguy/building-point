@@ -9,14 +9,36 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <fragment
-        android:name="com.kylemsguy.buildingpoint.LocDetailFragment"
-        android:id="@+id/locdetailfragment"
-        android:layout_weight="4"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:layout="@layout/fragment_loc_detail"
-        android:tag="LocDetailFragment" />
+        android:layout_weight="4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BuildingPoint"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:id="@+id/initial_title" />
+
+        <ImageView
+            android:layout_marginTop="15dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_launcher"
+            android:contentDescription="Map of Area"
+            android:id="@+id/logo_placeholder" />
+
+        <fragment
+            android:name="com.kylemsguy.buildingpoint.LocDetailFragment"
+            android:id="@+id/locdetailfragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/fragment_loc_detail"
+            android:tag="LocDetailFragment" />
+    </FrameLayout>
 
     <fragment
         android:name="com.kylemsguy.buildingpoint.QueryButtonFragment"
