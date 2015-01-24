@@ -2,6 +2,7 @@ package com.kylemsguy.buildingpoint;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -11,6 +12,8 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -166,9 +169,19 @@ public class MainActivity extends Activity implements SensorEventListener, View.
     }
 
     public void doQueryPoint() {
+//        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+ //       NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+  //      boolean isConnected = activeNetwork != null &&
+   //             activeNetwork.isConnectedOrConnecting();
         if (currentLocation == null) {
             showLocationSettingDialog();
-        } else {
+        }
+    //    else if(!isConnected){
+    //        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    //        alert.setTitle("Network Error");
+    //        alert.setMessage("Please check your internet connection.");
+    //    }
+        else {
             new ProcessPointTask(this, currentLocation, azimuth).execute();
         }
     }

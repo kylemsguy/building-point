@@ -6,14 +6,14 @@ android {
 
     defaultConfig {
         applicationId "com.kylemsguy.buildingpoint"
-        minSdkVersion 19
+        minSdkVersion 13
         targetSdkVersion 20
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
